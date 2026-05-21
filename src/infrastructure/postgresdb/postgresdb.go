@@ -5,6 +5,8 @@ import (
 	"log"
 
 	assetentities "github.com/alexkalak/whatever-system/src/modules/assets/entities"
+	dexentities "github.com/alexkalak/whatever-system/src/modules/exchanges/dex/entities"
+	tokenentities "github.com/alexkalak/whatever-system/src/modules/tokens/entities"
 	"github.com/alexkalak/whatever-system/src/shared/tools/env"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -29,6 +31,10 @@ func InitDB(env env.Env) *gorm.DB {
 	db.AutoMigrate(
 		&assetentities.Asset{},
 		&assetentities.AssetMapping{},
+		&dexentities.Dex{},
+		&dexentities.UniswapV2Dex{},
+		&dexentities.UniswapV3Dex{},
+		&tokenentities.Token{},
 	)
 
 	fmt.Println("Database initialized")

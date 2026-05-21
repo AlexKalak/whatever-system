@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/assets"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Bitcoin",
+      "symbol": "BTC",
+      "type": "crypto"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 201', function () { pm.response.to.have.status(201); });
+      const json = pm.response.json();
+      pm.expect(json.id).to.exist;
+      pm.collectionVariables.set('assetId', json.id);
+    language: text/javascript
+order: 1000

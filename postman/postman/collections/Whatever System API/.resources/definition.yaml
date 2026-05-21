@@ -1,0 +1,6 @@
+$kind: collection
+description: CRUD tests for assets and asset-mappings endpoints
+variables:
+  baseUrl: http://localhost:8080
+  assetId: ""
+  mappingId: ""

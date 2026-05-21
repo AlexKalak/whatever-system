@@ -2,9 +2,76 @@
   "info": {
     "name": "Whatever System API",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "CRUD tests for assets and asset-mappings endpoints"
+    "description": "CRUD tests for assets, asset-mappings and dex endpoints"
   },
   "item": [
+    {
+      "name": "Setup Assets For Dex",
+      "item": [
+        {
+          "name": "Create Asset 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Wrapped Ether\",\n  \"symbol\": \"WETH\",\n  \"type\": \"crypto\"\n}"
+            },
+            "url": "{{baseUrl}}/assets"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.id).to.exist;",
+                  "pm.collectionVariables.set('asset1Id', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Asset 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"USD Coin\",\n  \"symbol\": \"USDC\",\n  \"type\": \"crypto\"\n}"
+            },
+            "url": "{{baseUrl}}/assets"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.id).to.exist;",
+                  "pm.collectionVariables.set('asset2Id', json.id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
     {
       "name": "Assets",
       "item": [
@@ -13,7 +80,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -80,7 +150,10 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -130,7 +203,10 @@
           "request": {
             "method": "POST",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -197,7 +273,10 @@
           "request": {
             "method": "PUT",
             "header": [
-              { "key": "Content-Type", "value": "application/json" }
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
             ],
             "body": {
               "mode": "raw",
@@ -238,11 +317,150 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Dexes",
+      "item": [
+        {
+          "name": "Create Dex",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dexType\": \"uniswapv3\",\n  \"address\": \"0x2222222222222222222222222222222222222222\",\n  \"feeTier\": 3000\n}"
+            },
+            "url": "{{baseUrl}}/dexes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201', function () { pm.response.to.have.status(201); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.id).to.exist;",
+                  "pm.collectionVariables.set('dexId', json.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get All Dexes",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dexes"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Dex By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dexes/{{dexId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Dex",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dexType\": \"uniswapv3\",\n  \"address\": \"0x3333333333333333333333333333333333333333\",\n  \"feeTier\": 100\n}"
+            },
+            "url": "{{baseUrl}}/dexes/{{dexId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Dex",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/dexes/{{dexId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 204', function () { pm.response.to.have.status(204); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8080" },
-    { "key": "assetId", "value": "" },
-    { "key": "mappingId", "value": "" }
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "assetId",
+      "value": ""
+    },
+    {
+      "key": "mappingId",
+      "value": ""
+    },
+    {
+      "key": "asset1Id",
+      "value": ""
+    },
+    {
+      "key": "asset2Id",
+      "value": ""
+    },
+    {
+      "key": "dexId",
+      "value": ""
+    }
   ]
 }

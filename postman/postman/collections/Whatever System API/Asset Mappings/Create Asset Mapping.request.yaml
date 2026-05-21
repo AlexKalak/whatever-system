@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/asset-mappings"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "type": "onchain",
+      "name": "BTC Mainnet",
+      "exchange": "",
+      "symbolOnExchange": "",
+      "chainID": 1,
+      "address": "0x1234567890abcdef1234567890abcdef12345678",
+      "decimals": 8
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 201', function () { pm.response.to.have.status(201); });
+      const json = pm.response.json();
+      pm.expect(json.id).to.exist;
+      pm.collectionVariables.set('mappingId', json.id);
+    language: text/javascript
+order: 1000
