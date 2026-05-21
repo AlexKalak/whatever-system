@@ -8,21 +8,15 @@ var (
 )
 
 type SwapV3Payload struct {
-	ChainID        uint   `json:"chain_id"`
-	Dex            string `json:"dex"`
-	BlockNumber    uint64 `json:"block_number"`
-	PoolAddress    string `json:"pool_address"`
-	TxHash         string `json:"tx_hash"`
-	Sender         string `json:"sender"`
-	Recipient      string `json:"recipient"`
-	Amount0        string `json:"amount0"`
-	Amount1        string `json:"amount1"`
-	Token0Address  string `json:"token0_address,omitempty"`
-	Token1Address  string `json:"token1_address,omitempty"`
-	Token0Symbol   string `json:"token0_symbol,omitempty"`
-	Token1Symbol   string `json:"token1_symbol,omitempty"`
-	Token0Decimals uint8  `json:"token0_decimals,omitempty"`
-	Token1Decimals uint8  `json:"token1_decimals,omitempty"`
+	ChainID     uint   `json:"chain_id"`
+	Dex         string `json:"dex"`
+	BlockNumber uint64 `json:"block_number"`
+	PoolAddress string `json:"pool_address"`
+	TxHash      string `json:"tx_hash"`
+	Sender      string `json:"sender"`
+	Recipient   string `json:"recipient"`
+	Amount0     string `json:"amount0"`
+	Amount1     string `json:"amount1"`
 }
 
 type UnknownPayload struct {
