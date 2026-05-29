@@ -11,14 +11,12 @@ type DexCreateRequest struct {
 	DexType string `json:"dexType"`
 	ChainID uint64 `json:"chainId"`
 	Address string `json:"address"`
-	FeeTier uint   `json:"feeTier"`
 }
 
 type DexUpdateRequest struct {
 	DexType string `json:"dexType"`
 	ChainID uint64 `json:"chainId"`
 	Address string `json:"address"`
-	FeeTier uint   `json:"feeTier"`
 }
 
 type DexResponse struct {
@@ -26,7 +24,6 @@ type DexResponse struct {
 	DexType   string    `json:"dexType"`
 	ChainID   uint64    `json:"chainId"`
 	Address   string    `json:"address"`
-	FeeTier   uint      `json:"feeTier"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -47,15 +44,15 @@ func (r DexUpdateRequest) Validate() map[string]string {
 }
 
 func (r DexCreateRequest) ToEntity() *entities.Dex {
-	return &entities.Dex{DexType: strings.ToLower(strings.TrimSpace(r.DexType)), ChainID: r.ChainID, Address: strings.ToLower(strings.TrimSpace(r.Address)), FeeTier: r.FeeTier}
+	return &entities.Dex{DexType: strings.ToLower(strings.TrimSpace(r.DexType)), ChainID: r.ChainID, Address: strings.ToLower(strings.TrimSpace(r.Address))}
 }
 
 func (r DexUpdateRequest) ToEntity() *entities.Dex {
-	return &entities.Dex{DexType: strings.ToLower(strings.TrimSpace(r.DexType)), ChainID: r.ChainID, Address: strings.ToLower(strings.TrimSpace(r.Address)), FeeTier: r.FeeTier}
+	return &entities.Dex{DexType: strings.ToLower(strings.TrimSpace(r.DexType)), ChainID: r.ChainID, Address: strings.ToLower(strings.TrimSpace(r.Address))}
 }
 
 func ToDexResponse(dex *entities.Dex) DexResponse {
-	return DexResponse{ID: dex.ID.String(), DexType: dex.DexType, ChainID: dex.ChainID, Address: dex.Address, FeeTier: dex.FeeTier, CreatedAt: dex.CreatedAt, UpdatedAt: dex.UpdatedAt}
+	return DexResponse{ID: dex.ID.String(), DexType: dex.DexType, ChainID: dex.ChainID, Address: dex.Address, CreatedAt: dex.CreatedAt, UpdatedAt: dex.UpdatedAt}
 }
 
 func ToDexResponses(dexes []entities.Dex) []DexResponse {

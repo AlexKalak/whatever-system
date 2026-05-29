@@ -45,6 +45,7 @@ func (c *chainLogsParser) parse(lg types.Log) (chainentities.ChainEventType, cha
 	if len(lg.Topics) == 0 {
 		return "", nil, chainerrors.ErrEventSigNotFound
 	}
+
 	if slices.Contains(c.uniswapV2Sigs, lg.Topics[0]) {
 		switch lg.Topics[0] {
 		case c.uniswapV2ABI.SwapV2Sig:
@@ -127,5 +128,6 @@ func (c *chainLogsParser) parse(lg types.Log) (chainentities.ChainEventType, cha
 			return chainentities.ChainBurnV3Event, e, nil
 		}
 	}
+
 	return "", nil, chainerrors.ErrEventSigNotFound
 }

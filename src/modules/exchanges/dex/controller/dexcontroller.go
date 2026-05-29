@@ -34,11 +34,12 @@ func (c *DexController) Create(ctx *fiber.Ctx) error {
 	}
 
 	dex := payload.ToEntity()
-	if err := c.service.Create(dex); err != nil {
+	created, err := c.service.Create(dex)
+	if err != nil {
 		return ctx.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"message": err.Error()})
 	}
 
-	return ctx.Status(fiber.StatusCreated).JSON(dto.ToDexResponse(dex))
+	return ctx.Status(fiber.StatusCreated).JSON(dto.ToDexResponse(created))
 }
 
 func (c *DexController) GetAll(ctx *fiber.Ctx) error {

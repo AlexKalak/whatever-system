@@ -1,0 +1,174 @@
+[2026-05-29 10:56:40.582] [info] Using configuration file /home/alxk/.config/waybar/config
+[2026-05-29 10:56:40.582] [info] Including resource file: $HOME/.config/waybar/Modules
+[2026-05-29 10:56:40.583] [info] Including resource file: $HOME/.config/waybar/ModulesWorkspaces
+[2026-05-29 10:56:40.583] [info] Including resource file: $HOME/.config/waybar/ModulesCustom
+[2026-05-29 10:56:40.583] [info] Including resource file: $HOME/.config/waybar/ModulesGroups
+[2026-05-29 10:56:40.583] [info] Including resource file: $HOME/.config/waybar/UserModules
+[2026-05-29 10:56:40.585] [info] Discovered appearance 'dark'
+[2026-05-29 10:56:40.598] [info] Using CSS file /home/alxk/.config/waybar/style.css
+Failed to register: GDBus.Error:org.freedesktop.DBus.Error.NoReply: Remote peer disconnected
+[2026-05-29 10:56:40.751] [warning] Failed to open bar ipc connection: Socket path is empty
+[2026-05-29 10:56:40.758] [info] Hyprland IPC starting
+[2026-05-29 10:56:40.771] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:56:40.771] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 10:56:40.771] [info] Registering for Hyprland's 'windowtitlev2' events because a user-defined window rewrite rule uses the 'title' field.
+time=2026-05-29T10:56:40.789+03:00 level=INFO msg="starting waybar-weather service" version=0.3.0 commit=main-via-aur date=2026-05-13T14:06:30Z process_id=114158
+[2026-05-29 10:56:40.905] [info] Found device AT Translated Set 2 keyboard at '/dev/input/event2'
+[2026-05-29 10:56:40.974] [warning] Failed to open bar ipc connection: Socket path is empty
+[2026-05-29 10:56:40.988] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:56:40.988] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 10:56:40.988] [info] Registering for Hyprland's 'windowtitlev2' events because a user-defined window rewrite rule uses the 'title' field.
+time=2026-05-29T10:56:41.003+03:00 level=INFO msg="starting waybar-weather service" version=0.3.0 commit=main-via-aur date=2026-05-13T14:06:30Z process_id=114239
+[2026-05-29 10:56:41.165] [info] Found device AT Translated Set 2 keyboard at '/dev/input/event2'
+
+** (waybar:114096): WARNING **: 10:56:41.232: Status Notifier Item with bus name ':1.16' and object path '/org/ayatana/NotificationItem/nm_applet' is already registered
+Done                       cava -p "$config_file" | sed -u "$dict"
+Charging
+Charging
+[2026-05-29 10:56:41.536] [info] Bar configured (width: 1904, height: 34) for output: eDP-1
+[2026-05-29 10:56:41.536] [info] Bar configured (width: 1904, height: 34) for output: HDMI-A-1
+[2026-05-29 10:56:41.549] [error] cava_mviz stopped unexpectedly, is it endless?
+
+** (waybar:114096): WARNING **: 10:56:42.793: Status Notifier Item with bus name ':1.16' and object path '/org/ayatana/NotificationItem/nm_applet' is already registered
+Charging
+Charging
+Charging
+Charging
+[2026-05-29 10:59:14.490] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 10:59:14.521] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:59:14.521] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 10:59:14.521] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 10:59:14.523] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:59:14.523] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 10:59:26.715] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 10:59:26.749] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:59:26.749] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 10:59:26.749] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 10:59:26.751] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 10:59:26.752] [info] Loading persistent workspaces from Hyprland workspace rules
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.277: drawing failure for widget 'gtkmm__GtkButton': out of memory
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.277: drawing failure for widget 'gtkmm__GtkBox': out of memory
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.277: drawing failure for widget 'gtkmm__GtkEventBox': out of memory
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.278: drawing failure for widget 'gtkmm__GtkBox': out of memory
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.278: drawing failure for widget 'gtkmm__GtkBox': out of memory
+
+(waybar:114096): Gtk-WARNING **: 11:01:21.278: drawing failure for widget 'gtkmm__GtkWindow': out of memory
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+[2026-05-29 11:02:46.987] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 11:02:47.028] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 11:02:47.029] [info] Loading persistent workspaces from Hyprland workspace rules
+[2026-05-29 11:02:47.029] [info] Hyprland config reloaded, reinitializing hyprland/workspaces module...
+[2026-05-29 11:02:47.030] [info] Loading persistent workspaces from Waybar config
+[2026-05-29 11:02:47.030] [info] Loading persistent workspaces from Hyprland workspace rules
+time=2026-05-29T11:39:26.932+03:00 level=INFO msg="shutting down waybar-weather service"
+Terminated                 cava -p "$config_file" | sed -u "$dict"
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+Charging
+[2026-05-29 11:39:27.015] [info] Bar removed from output: HDMI-A-1
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+Discharging
+[2026-05-29 12:09:30.479] [warning] Requested height: 34 is less than the minimum height: 35 required by the modules
+[2026-05-29 12:09:30.479] [info] Bar configured (width: 1904, height: 35) for output: eDP-1
+[2026-05-29 12:09:33.539] [info] Bar configured (width: 1904, height: 34) for output: eDP-1

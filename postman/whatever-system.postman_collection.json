@@ -435,12 +435,60 @@
           ]
         }
       ]
+    },
+    {
+      "name": "WebSockets",
+      "item": [
+        {
+          "name": "Connect Dex Trades",
+          "protocolProfileBehavior": {
+            "websocket": true
+          },
+          "request": {
+            "header": [],
+            "url": {
+              "raw": "{{wsBaseUrl}}/ws/dextrades?address={{dexTradeAddress}}&chainId={{dexTradeChainId}}",
+              "protocol": "ws",
+              "host": [
+                "{{wsBaseUrl}}"
+              ],
+              "path": [
+                "ws",
+                "dextrades"
+              ],
+              "query": [
+                {
+                  "key": "address",
+                  "value": "{{dexTradeAddress}}"
+                },
+                {
+                  "key": "chainId",
+                  "value": "{{dexTradeChainId}}"
+                }
+              ]
+            },
+            "description": "WebSocket connection for filtered DEX trades. Sends only trades matching the provided address and chainId."
+          }
+        }
+      ]
     }
   ],
   "variable": [
     {
       "key": "baseUrl",
       "value": "http://localhost:8080"
+    },
+    {
+      "key": "wsBaseUrl",
+      "value": "ws://localhost:8080"
+    },
+    {
+      "key": "dexTradeAddress",
+      "value": "0x0000000000000000000000000000000000000000"
+    },
+    {
+      "key": "dexTradeChainId",
+      "value": "56"
     },
     {
       "key": "assetId",

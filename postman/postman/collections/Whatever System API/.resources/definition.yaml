@@ -1,6 +1,9 @@
 $kind: collection
-description: CRUD tests for assets and asset-mappings endpoints
+description: CRUD tests for assets, asset-mappings, dex endpoints and dex trades websocket
 variables:
   baseUrl: http://localhost:8080
+  wsBaseUrl: ws://localhost:8080
+  dexTradeAddress: "0x0000000000000000000000000000000000000000"
+  dexTradeChainId: "56"
   assetId: ""
   mappingId: ""

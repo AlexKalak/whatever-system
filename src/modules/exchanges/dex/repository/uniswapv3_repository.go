@@ -8,7 +8,9 @@ import (
 
 type UniswapV3Repository interface {
 	Create(item *entities.UniswapV3Dex) error
+	Update(item *entities.UniswapV3Dex) error
 	GetByDexID(dexID uuid.UUID) (*entities.UniswapV3Dex, error)
+	GetIncomplete() ([]entities.UniswapV3Dex, error)
 }
 
 type uniswapV3Repository struct {
@@ -23,6 +25,10 @@ func (r *uniswapV3Repository) Create(item *entities.UniswapV3Dex) error {
 	return r.db.Create(item).Error
 }
 
+func (r *uniswapV3Repository) Update(item *entities.UniswapV3Dex) error {
+	return r.db.Save(item).Error
+}
+
 func (r *uniswapV3Repository) GetByDexID(dexID uuid.UUID) (*entities.UniswapV3Dex, error) {
 	var item entities.UniswapV3Dex
 	err := r.db.First(&item, "dex_id = ?", dexID).Error
@@ -30,4 +36,13 @@ func (r *uniswapV3Repository) GetByDexID(dexID uuid.UUID) (*entities.UniswapV3De
 		return nil, err
 	}
 	return &item, nil
+}
+
+func (r *uniswapV3Repository) GetIncomplete() ([]entities.UniswapV3Dex, error) {
+	var items []entities.UniswapV3Dex
+	err := r.db.
+		Preload("Dex").
+		Where("token0_address = '' OR token1_address = '' OR fee_tier = 0 OR tick_spacing = 0").
+		Find(&items).Error
+	return items, err
 }
