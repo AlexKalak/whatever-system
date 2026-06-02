@@ -13,6 +13,12 @@ type ChainMempoolCallDataMessage struct {
 	Args      map[string]any `json:"args"`
 }
 
+type ChainMempoolHashMessage struct {
+	TS      time.Time `json:"ts"`
+	ChainID uint      `json:"chainId"`
+	TxHash  string    `json:"txHash"`
+}
+
 type ChainMempoolEventMessage struct {
 	TS       time.Time                   `json:"ts"`
 	ChainID  uint                        `json:"chainId"`
@@ -20,7 +26,16 @@ type ChainMempoolEventMessage struct {
 	From     string                      `json:"from"`
 	To       string                      `json:"to"`
 	Value    string                      `json:"value"`
+	Input    string                      `json:"input"`
 	CallData ChainMempoolCallDataMessage `json:"callData"`
+}
+
+func NewChainMempoolHashMessage(event chainservice.ChainMempoolHashChannelEntity) ChainMempoolHashMessage {
+	return ChainMempoolHashMessage{
+		TS:      event.TS,
+		ChainID: event.ChainID,
+		TxHash:  event.TxHash,
+	}
 }
 
 func NewChainMempoolEventMessage(event chainservice.ChainMempoolEventChannelEntity) ChainMempoolEventMessage {
@@ -30,6 +45,7 @@ func NewChainMempoolEventMessage(event chainservice.ChainMempoolEventChannelEnti
 		TxHash:  event.TxHash,
 		From:    event.From,
 		To:      event.To,
+		Input:   event.Input,
 		Value:   event.Value,
 		CallData: ChainMempoolCallDataMessage{
 			Method:    event.CallData.Method,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	chainservice "github.com/alexkalak/whatever-system/src/modules/chain/service"
@@ -63,9 +62,7 @@ func (s *uniswapV3DexService) EnsureByDex(ctx context.Context, dex *dexentities.
 			return nil, err
 		}
 
-		log.Println("Getting v3PoolInfo while ensuring: ", dex.ChainID, dex.Address)
 		info, err := s.chainData.GetUniswapV3PoolInfo(ctx, uint(dex.ChainID), dex.Address)
-		log.Println("Got v3PoolInfo for ensuring: ", dex.ChainID, dex.Address, info.Token0Address, info.Token1Address)
 		if err != nil {
 			return nil, err
 		}

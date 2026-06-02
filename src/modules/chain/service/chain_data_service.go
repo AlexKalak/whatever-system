@@ -38,7 +38,7 @@ type multicall3Result struct {
 	ReturnData []byte
 }
 
-func NewEVMChainDataService(rpcByChainID map[uint]string) (ChainDataService, error) {
+func NewEVMChainDataService(rpcByChainID map[uint]string, multicallByChainID ...map[uint]string) (ChainDataService, error) {
 	erc20ABI, err := abi.JSON(strings.NewReader(abis.ERC20MetadataABIString))
 	if err != nil {
 		return nil, err
@@ -63,6 +63,17 @@ func NewEVMChainDataService(rpcByChainID map[uint]string) (ChainDataService, err
 	if err != nil {
 		return nil, err
 	}
+	multicallAddresses := make(map[uint]common.Address)
+	if len(multicallByChainID) > 0 {
+		for chainID, address := range multicallByChainID[0] {
+			address = strings.TrimSpace(address)
+			if address == "" {
+				continue
+			}
+			multicallAddresses[chainID] = common.HexToAddress(address)
+		}
+	}
+
 	clients := make(map[uint]*ethclient.Client, len(rpcByChainID))
 	for chainID, rpcURL := range rpcByChainID {
 		client, err := ethclient.Dial(rpcURL)
@@ -79,12 +90,12 @@ func NewEVMChainDataService(rpcByChainID map[uint]string) (ChainDataService, err
 		uniswapV3ABI:                uniswapV3ABI,
 		uniswapV3Slot0NoUnlockedABI: uniswapV3Slot0NoUnlockedABI,
 		multicall3ABI:               multicall3ABI,
-		multicallAddresses:          map[uint]common.Address{56: common.HexToAddress("0xcA11bde05977b3631167028862bE2a173976CA11")},
+		multicallAddresses:          multicallAddresses,
 	}, nil
 }
 
 func (s *evmChainDataService) GetUniswapV2PairInfo(ctx context.Context, chainID uint, pairAddress string) (UniswapV2PairInfo, error) {
-	log.Println("Getting uniswapv2pairinfo")
+	log.Println("Getting uniswapv2pairinfo: ", chainID, pairAddress)
 	addr := common.HexToAddress(pairAddress)
 
 	token0Data, _ := s.uniswapV2ABI.Pack("token0")
@@ -143,7 +154,7 @@ func (s *evmChainDataService) GetUniswapV2PairInfo(ctx context.Context, chainID 
 }
 
 func (s *evmChainDataService) GetUniswapV3PoolInfo(ctx context.Context, chainID uint, poolAddress string) (UniswapV3PoolInfo, error) {
-	log.Println("Getting uniswapv3poolinfo")
+	log.Println("Getting uniswapv3poolinfo: ", chainID, poolAddress)
 	addr := common.HexToAddress(poolAddress)
 
 	token0Data, _ := s.uniswapV3ABI.Pack("token0")

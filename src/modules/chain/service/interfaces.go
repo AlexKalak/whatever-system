@@ -41,8 +41,16 @@ type ChainLogsStreamerConfig struct {
 }
 
 type ChainMempoolStreamerConfig struct {
-	ChainID  uint
-	WsRPCURL string
+	ChainID            uint
+	WsRPCURL           string
+	PendingTxLogPath   string
+	SubscriptionMethod string
+	SubscriptionParams []any
+}
+
+type ChainDataServiceConfig struct {
+	RPCByChainID       map[uint]string
+	MulticallByChainID map[uint]string
 }
 
 type ChainBlockChannelEntity struct {
@@ -65,6 +73,12 @@ type ChainMempoolCallData struct {
 	Args      map[string]any `json:"args"`
 }
 
+type ChainMempoolHashChannelEntity struct {
+	TS      time.Time `json:"ts"`
+	ChainID uint      `json:"chainId"`
+	TxHash  string    `json:"txHash"`
+}
+
 type ChainMempoolEventChannelEntity struct {
 	TS       time.Time            `json:"ts"`
 	ChainID  uint                 `json:"chainId"`
@@ -72,11 +86,17 @@ type ChainMempoolEventChannelEntity struct {
 	From     string               `json:"from"`
 	To       string               `json:"to"`
 	Value    string               `json:"value"`
+	Input    string               `json:"input"`
 	CallData ChainMempoolCallData `json:"callData"`
 }
 
+type ChainMempoolStreams struct {
+	Hashes       <-chan ChainMempoolHashChannelEntity
+	Transactions <-chan ChainMempoolEventChannelEntity
+}
+
 type ChainMempoolStreamer interface {
-	Start(ctx context.Context) (<-chan ChainMempoolEventChannelEntity, error)
+	Start(ctx context.Context) (ChainMempoolStreams, error)
 }
 
 type ChainDataService interface {

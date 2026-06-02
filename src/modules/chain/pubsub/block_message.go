@@ -18,11 +18,13 @@ type ChainBlockMessage struct {
 }
 
 type ChainEventMessage struct {
-	Type        chainentities.ChainEventType `json:"type"`
-	BlockNumber uint64                       `json:"blockNumber"`
-	Address     string                       `json:"address"`
-	TxHash      string                       `json:"txHash"`
-	Data        json.RawMessage              `json:"data"`
+	Type         chainentities.ChainEventType `json:"type"`
+	BlockNumber  uint64                       `json:"blockNumber"`
+	IndexInBlock uint64                       `json:"indexInBlock"`
+	IndexInTx    uint64                       `json:"indexInTx"`
+	Address      string                       `json:"address"`
+	TxHash       string                       `json:"txHash"`
+	Data         json.RawMessage              `json:"data"`
 }
 
 func NewChainBlockMessage(block chainservice.ChainBlockChannelEntity) (ChainBlockMessage, error) {
@@ -34,11 +36,13 @@ func NewChainBlockMessage(block chainservice.ChainBlockChannelEntity) (ChainBloc
 		}
 
 		events = append(events, ChainEventMessage{
-			Type:        event.Type,
-			BlockNumber: event.BlockNumber,
-			Address:     event.Address,
-			TxHash:      event.TxHash,
-			Data:        data,
+			Type:         event.Type,
+			BlockNumber:  event.BlockNumber,
+			IndexInBlock: event.IndexInBlock,
+			IndexInTx:    event.IndexInTx,
+			Address:      event.Address,
+			TxHash:       event.TxHash,
+			Data:         data,
 		})
 	}
 

@@ -54,6 +54,8 @@ func (p *chainMempoolCallDataParser) parse(data []byte) (ChainMempoolCallData, b
 		return ChainMempoolCallData{}, false, nil
 	}
 
+	fmt.Println("Found by id: ", method)
+
 	args := make(map[string]any)
 	if err := method.Inputs.UnpackIntoMap(args, data[4:]); err != nil {
 		return ChainMempoolCallData{}, false, err

@@ -2,7 +2,6 @@ package kafka
 
 import (
 	"context"
-
 	"github.com/alexkalak/whatever-system/src/modules/pubsub"
 	segmentio "github.com/segmentio/kafka-go"
 )
@@ -18,8 +17,10 @@ type Publisher struct {
 func NewPublisher(cfg PublisherConfig) *Publisher {
 	return &Publisher{
 		writer: &segmentio.Writer{
-			Addr:     segmentio.TCP(cfg.Brokers...),
-			Balancer: &segmentio.Hash{},
+			Addr:                   segmentio.TCP(cfg.Brokers...),
+			Balancer:               &segmentio.Hash{},
+			AllowAutoTopicCreation: true,
+			BatchSize:              1,
 		},
 	}
 }

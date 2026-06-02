@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	chainservice "github.com/alexkalak/whatever-system/src/modules/chain/service"
@@ -62,9 +61,7 @@ func (s *uniswapV2DexService) EnsureByDex(ctx context.Context, dex *dexentities.
 			return nil, err
 		}
 
-		log.Println("Getting v2PairInfo while ensuring: ", dex.ChainID, dex.Address)
 		info, err := s.chainData.GetUniswapV2PairInfo(ctx, uint(dex.ChainID), dex.Address)
-		log.Println("Got v2PairInfo for ensuring: ", dex.ChainID, dex.Address, info.Token0Address, info.Token1Address)
 		if err != nil {
 			return nil, err
 		}

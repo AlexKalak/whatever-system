@@ -1,4 +1,0 @@
-$kind: websocket-request
-url: "{{wsBaseUrl}}/ws/dextrades?address={{dexTradeAddress}}&chainId={{dexTradeChainId}}"
-description: WebSocket connection for filtered DEX trades. Sends only trades matching the provided address and chainId.
-order: 4000

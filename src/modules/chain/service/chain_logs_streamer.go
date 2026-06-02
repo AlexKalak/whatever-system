@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"sync"
 	"time"
 
 	chainentities "github.com/alexkalak/whatever-system/src/modules/chain/entities"
@@ -14,6 +15,8 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 )
+
+const chainLogsBlockWorkers = 8
 
 type chainLogsStreamer struct {
 	parser         chainLogsParser
@@ -115,12 +118,77 @@ func (s *chainLogsStreamer) backfillAndStreamBlocks(
 }
 
 func (s *chainLogsStreamer) backfillBlocks(ctx context.Context, fromBlock uint64, toBlock uint64, addresses []common.Address, outCh chan<- ChainBlockChannelEntity) error {
-	for blockNumber := fromBlock; blockNumber <= toBlock; blockNumber++ {
-		log.Println("Backfilling: ", blockNumber)
-		if err := s.emitBlock(ctx, blockNumber, addresses, outCh); err != nil {
-			log.Println("Err emiting block: ", blockNumber)
-			return err
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	jobsCh := make(chan uint64)
+	resultsCh := make(chan blockLoadResult, chainLogsBlockWorkers)
+
+	workerCount := chainLogsBlockWorkers
+	blockCount := int(toBlock - fromBlock + 1)
+	if blockCount < workerCount {
+		workerCount = blockCount
+	}
+
+	var wg sync.WaitGroup
+	for range workerCount {
+		wg.Go(func() {
+			for blockNumber := range jobsCh {
+				log.Println("Backfilling: ", blockNumber)
+				block, err := s.loadBlockEvents(ctx, blockNumber, addresses)
+				select {
+				case <-ctx.Done():
+					return
+				case resultsCh <- blockLoadResult{blockNumber: blockNumber, block: block, err: err}:
+				}
+			}
+		})
+	}
+
+	go func() {
+		defer close(jobsCh)
+		for blockNumber := fromBlock; blockNumber <= toBlock; blockNumber++ {
+			select {
+			case <-ctx.Done():
+				return
+			case jobsCh <- blockNumber:
+			}
 		}
+	}()
+
+	go func() {
+		wg.Wait()
+		close(resultsCh)
+	}()
+
+	nextToEmit := fromBlock
+	pending := make(map[uint64]ChainBlockChannelEntity)
+	for result := range resultsCh {
+		if result.err != nil {
+			log.Println("Err emiting block: ", result.blockNumber)
+			cancel()
+			return result.err
+		}
+
+		pending[result.blockNumber] = result.block
+		for {
+			block, ok := pending[nextToEmit]
+			if !ok {
+				break
+			}
+			if err := s.publishBlock(ctx, block, outCh); err != nil {
+				return err
+			}
+			delete(pending, nextToEmit)
+			if nextToEmit == toBlock {
+				return nil
+			}
+			nextToEmit++
+		}
+	}
+
+	if err := ctx.Err(); err != nil {
+		return err
 	}
 	return nil
 }
@@ -133,6 +201,12 @@ func (s *chainLogsStreamer) streamNewBlocks(
 	headersCh <-chan *types.Header,
 	outCh chan<- ChainBlockChannelEntity,
 ) error {
+	resultsCh := make(chan blockLoadResult, chainLogsBlockWorkers)
+	sem := make(chan struct{}, chainLogsBlockWorkers)
+	pending := make(map[uint64]ChainBlockChannelEntity)
+	scheduled := make(map[uint64]struct{})
+	order := make([]uint64, 0, chainLogsBlockWorkers)
+
 	for {
 		select {
 		case <-ctx.Done():
@@ -141,6 +215,26 @@ func (s *chainLogsStreamer) streamNewBlocks(
 		case err := <-sub.Err():
 			log.Println("Sub err: ", err)
 			return err
+		case result := <-resultsCh:
+			if result.err != nil {
+				log.Println("Err emiting ws block", result.err)
+				return result.err
+			}
+			pending[result.blockNumber] = result.block
+			for len(order) > 0 {
+				blockNumber := order[0]
+				block, ok := pending[blockNumber]
+				if !ok {
+					break
+				}
+				if err := s.publishBlock(ctx, block, outCh); err != nil {
+					return err
+				}
+				delete(pending, blockNumber)
+				delete(scheduled, blockNumber)
+				order = order[1:]
+				lastProcessedBlock = blockNumber
+			}
 		case header, ok := <-headersCh:
 			if !ok {
 				log.Println("Sub header not ok")
@@ -154,22 +248,37 @@ func (s *chainLogsStreamer) streamNewBlocks(
 			if blockNumber <= lastProcessedBlock {
 				continue
 			}
-
-			if err := s.emitBlock(ctx, blockNumber, addresses, outCh); err != nil {
-				log.Println("Err emiting ws block", err)
-				return err
+			if _, ok := scheduled[blockNumber]; ok {
+				continue
 			}
-			lastProcessedBlock = blockNumber
+
+			scheduled[blockNumber] = struct{}{}
+			order = append(order, blockNumber)
+			go func() {
+				select {
+				case <-ctx.Done():
+					return
+				case sem <- struct{}{}:
+				}
+				defer func() { <-sem }()
+
+				block, err := s.loadBlockEvents(ctx, blockNumber, addresses)
+				select {
+				case <-ctx.Done():
+				case resultsCh <- blockLoadResult{blockNumber: blockNumber, block: block, err: err}:
+				}
+			}()
 		}
 	}
 }
 
-func (s *chainLogsStreamer) emitBlock(ctx context.Context, blockNumber uint64, addresses []common.Address, outCh chan<- ChainBlockChannelEntity) error {
-	block, err := s.loadBlockEvents(ctx, blockNumber, addresses)
-	if err != nil {
-		return err
-	}
+type blockLoadResult struct {
+	blockNumber uint64
+	block       ChainBlockChannelEntity
+	err         error
+}
 
+func (s *chainLogsStreamer) publishBlock(ctx context.Context, block ChainBlockChannelEntity, outCh chan<- ChainBlockChannelEntity) error {
 	select {
 	case <-ctx.Done():
 		return ctx.Err()
@@ -199,10 +308,13 @@ func (s *chainLogsStreamer) loadBlockEvents(ctx context.Context, blockNumber uin
 	}
 
 	events := make([]chainentities.ChainEvent, 0, len(logs))
+	txLogIndexes := make(map[common.Hash]uint64)
 	for _, lg := range logs {
-		event, ok := s.parseLog(lg)
+		indexInTx := txLogIndexes[lg.TxHash]
+		event, ok := s.parseLog(lg, indexInTx)
 		if ok {
 			events = append(events, event)
+			txLogIndexes[lg.TxHash] = indexInTx + 1
 		}
 	}
 
@@ -216,17 +328,19 @@ func (s *chainLogsStreamer) loadBlockEvents(ctx context.Context, blockNumber uin
 	}, nil
 }
 
-func (s *chainLogsStreamer) parseLog(lg types.Log) (chainentities.ChainEvent, bool) {
+func (s *chainLogsStreamer) parseLog(lg types.Log, indexInTx uint64) (chainentities.ChainEvent, bool) {
 	eventType, data, err := s.parser.parse(lg)
 	if err != nil {
 		return chainentities.ChainEvent{}, false
 	}
 
 	return chainentities.ChainEvent{
-		Type:        eventType,
-		BlockNumber: lg.BlockNumber,
-		Address:     lg.Address.String(),
-		TxHash:      lg.TxHash.String(),
-		Data:        data,
+		Type:         eventType,
+		BlockNumber:  lg.BlockNumber,
+		IndexInBlock: uint64(lg.Index),
+		IndexInTx:    indexInTx,
+		Address:      lg.Address.String(),
+		TxHash:       lg.TxHash.String(),
+		Data:         data,
 	}, true
 }

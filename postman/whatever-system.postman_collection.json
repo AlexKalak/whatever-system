@@ -437,38 +437,271 @@
       ]
     },
     {
-      "name": "WebSockets",
+      "name": "Dex Actions",
       "item": [
         {
-          "name": "Connect Dex Trades",
-          "protocolProfileBehavior": {
-            "websocket": true
-          },
+          "name": "Get All Dex Actions",
           "request": {
-            "header": [],
-            "url": {
-              "raw": "{{wsBaseUrl}}/ws/dextrades?address={{dexTradeAddress}}&chainId={{dexTradeChainId}}",
-              "protocol": "ws",
-              "host": [
-                "{{wsBaseUrl}}"
-              ],
-              "path": [
-                "ws",
-                "dextrades"
-              ],
-              "query": [
-                {
-                  "key": "address",
-                  "value": "{{dexTradeAddress}}"
-                },
-                {
-                  "key": "chainId",
-                  "value": "{{dexTradeChainId}}"
-                }
-              ]
-            },
-            "description": "WebSocket connection for filtered DEX trades. Sends only trades matching the provided address and chainId."
-          }
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.items).to.exist;",
+                  "if (json.items && json.items.uniswapV2 && json.items.uniswapV2.length > 0) {",
+                  "  pm.collectionVariables.set('dexActionV2Id', json.items.uniswapV2[0].id);",
+                  "  pm.collectionVariables.set('dexActionTxHash', json.items.uniswapV2[0].txHash);",
+                  "  pm.collectionVariables.set('dexActionAddress', json.items.uniswapV2[0].dexAddress || json.items.uniswapV2[0].poolAddress);",
+                  "  pm.collectionVariables.set('dexActionChainId', String(json.items.uniswapV2[0].chainId));",
+                  "}",
+                  "if (json.items && json.items.uniswapV3 && json.items.uniswapV3.length > 0) {",
+                  "  pm.collectionVariables.set('dexActionV3Id', json.items.uniswapV3[0].id);",
+                  "  pm.collectionVariables.set('dexActionTxHash', json.items.uniswapV3[0].txHash);",
+                  "  pm.collectionVariables.set('dexActionAddress', json.items.uniswapV3[0].dexAddress || json.items.uniswapV3[0].poolAddress);",
+                  "  pm.collectionVariables.set('dexActionChainId', String(json.items.uniswapV3[0].chainId));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Dex Actions By Tx Hash",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/tx/{{dexActionTxHash}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Dex Actions By Chain And Dex Address",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/chain/{{dexActionChainId}}/dex/{{dexActionAddress}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V2 Trades",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v2?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.items).to.be.an('array');",
+                  "if (json.items.length > 0) {",
+                  "  pm.collectionVariables.set('dexActionV2Id', json.items[0].id);",
+                  "  pm.collectionVariables.set('dexActionTxHash', json.items[0].txHash);",
+                  "  pm.collectionVariables.set('dexActionAddress', json.items[0].dexAddress || json.items[0].poolAddress);",
+                  "  pm.collectionVariables.set('dexActionChainId', String(json.items[0].chainId));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V2 Trades Ordered By Amount0",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v2?page=1&limit=20&orderBy=amount0&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V2 By Tx Hash",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v2/tx/{{dexActionTxHash}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V2 By Chain And Dex Address",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v2/chain/{{dexActionChainId}}/dex/{{dexActionAddress}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V2 By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v2/{{dexActionV2Id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V3 Trades",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v3?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });",
+                  "const json = pm.response.json();",
+                  "pm.expect(json.items).to.be.an('array');",
+                  "if (json.items.length > 0) {",
+                  "  pm.collectionVariables.set('dexActionV3Id', json.items[0].id);",
+                  "  pm.collectionVariables.set('dexActionTxHash', json.items[0].txHash);",
+                  "  pm.collectionVariables.set('dexActionAddress', json.items[0].dexAddress || json.items[0].poolAddress);",
+                  "  pm.collectionVariables.set('dexActionChainId', String(json.items[0].chainId));",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V3 Trades Ordered By Amount1",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v3?page=1&limit=20&orderBy=amount1&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V3 By Tx Hash",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v3/tx/{{dexActionTxHash}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V3 By Chain And Dex Address",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v3/chain/{{dexActionChainId}}/dex/{{dexActionAddress}}?page=1&limit=20&orderBy=time&direction=desc"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Uniswap V3 By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/dex-actions/uniswap-v3/{{dexActionV3Id}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
         }
       ]
     }
@@ -483,11 +716,11 @@
       "value": "ws://localhost:8080"
     },
     {
-      "key": "dexTradeAddress",
+      "key": "dexActionAddress",
       "value": "0x0000000000000000000000000000000000000000"
     },
     {
-      "key": "dexTradeChainId",
+      "key": "dexActionChainId",
       "value": "56"
     },
     {
@@ -508,6 +741,18 @@
     },
     {
       "key": "dexId",
+      "value": ""
+    },
+    {
+      "key": "dexActionTxHash",
+      "value": "0x0000000000000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "key": "dexActionV2Id",
+      "value": ""
+    },
+    {
+      "key": "dexActionV3Id",
       "value": ""
     }
   ]

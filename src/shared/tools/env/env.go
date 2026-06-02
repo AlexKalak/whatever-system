@@ -10,18 +10,22 @@ import (
 )
 
 type Env struct {
-	IsDev                       bool   `env:"IS_DEV"`
-	BscRPCWsURL                 string `env:"BSC_RPC_WS_URL"`
-	BscRPCHTTPSURL              string `env:"BSC_RPC_HTTPS_URL"`
-	PostgresHost                string `env:"POSTGRES_HOST"`
-	PostgresUser                string `env:"POSTGRES_USER"`
-	PostgresPassword            string `env:"POSTGRES_PASSWORD"`
-	PostgresDBName              string `env:"POSTGRES_DBNAME"`
-	PostgresPort                int    `env:"POSTGRES_PORT"`
-	KafkaBrokers                string `env:"KAFKA_BROKERS"`
-	KafkaDexConsumerGroup       string `env:"KAFKA_DEX_CONSUMER_GROUP"`
-	KafkaDexTradesConsumerGroup string `env:"KAFKA_DEX_TRADES_CONSUMER_GROUP"`
-	KafkaMempoolConsumerGroup   string `env:"KAFKA_MEMPOOL_CONSUMER_GROUP"`
+	IsDev                        bool   `env:"IS_DEV"`
+	BscRPCWsURL                  string `env:"BSC_RPC_WS_URL"`
+	BscRPCHTTPSURL               string `env:"BSC_RPC_HTTPS_URL"`
+	EthRPCWsURL                  string `env:"ETH_RPC_WS_URL"`
+	EthRPCHTTPSURL               string `env:"ETH_RPC_HTTPS_URL"`
+	BscMulticall3Address         string `env:"BSC_MULTICALL3_ADDRESS"`
+	EthMulticall3Address         string `env:"ETH_MULTICALL3_ADDRESS"`
+	PostgresHost                 string `env:"POSTGRES_HOST"`
+	PostgresUser                 string `env:"POSTGRES_USER"`
+	PostgresPassword             string `env:"POSTGRES_PASSWORD"`
+	PostgresDBName               string `env:"POSTGRES_DBNAME"`
+	PostgresPort                 int    `env:"POSTGRES_PORT"`
+	KafkaBrokers                 string `env:"KAFKA_BROKERS"`
+	KafkaDexConsumerGroup        string `env:"KAFKA_DEX_CONSUMER_GROUP"`
+	KafkaDexActionsConsumerGroup string `env:"KAFKA_DEX_ACTIONS_CONSUMER_GROUP"`
+	KafkaMempoolConsumerGroup    string `env:"KAFKA_MEMPOOL_CONSUMER_GROUP"`
 }
 
 var env Env

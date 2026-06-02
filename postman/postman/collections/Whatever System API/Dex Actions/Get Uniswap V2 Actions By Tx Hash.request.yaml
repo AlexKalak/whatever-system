@@ -1,0 +1,13 @@
+$kind: http-request
+url: "{{baseUrl}}/dex-actions/uniswap-v2/tx/{{dexActionTxHash}}?page={{page}}&limit={{limit}}&orderBy={{dexActionOrderBy}}&direction={{dexActionDirection}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status is 200', function () { pm.response.to.have.status(200); });
+      const json = pm.response.json();
+      pm.expect(json.items).to.be.an('array');
+      pm.expect(json.orderBy).to.exist;
+      pm.expect(json.direction).to.exist;
+    language: text/javascript
+order: 2200

@@ -8,8 +8,9 @@ import (
 
 	assetentities "github.com/alexkalak/whatever-system/src/modules/assets/entities"
 	dexentities "github.com/alexkalak/whatever-system/src/modules/exchanges/dex/entities"
+	mempoolhashentities "github.com/alexkalak/whatever-system/src/modules/mempoolhashes/entities"
 	tokenentities "github.com/alexkalak/whatever-system/src/modules/tokens/entities"
-	dextradeentities "github.com/alexkalak/whatever-system/src/modules/trades/dextrades/entities"
+	dexactionentities "github.com/alexkalak/whatever-system/src/modules/trades/dexactions/entities"
 	"github.com/alexkalak/whatever-system/src/shared/tools/env"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -33,6 +34,10 @@ func InitDB(env env.Env) *gorm.DB {
 		log.Fatal("failed to connect database:", err)
 	}
 
+	if err := db.Exec("DROP INDEX IF EXISTS idx_dexes_address").Error; err != nil {
+		log.Fatal("failed to drop old dex address unique index:", err)
+	}
+
 	if err := db.AutoMigrate(
 		&assetentities.Asset{},
 		&assetentities.AssetMapping{},
@@ -40,8 +45,9 @@ func InitDB(env env.Env) *gorm.DB {
 		&dexentities.UniswapV2Dex{},
 		&dexentities.UniswapV3Dex{},
 		&tokenentities.Token{},
-		&dextradeentities.DexTradeUniswapV2{},
-		&dextradeentities.DexTradeUniswapV3{},
+		&mempoolhashentities.MempoolHash{},
+		&dexactionentities.DexActionUniswapV2{},
+		&dexactionentities.DexActionUniswapV3{},
 	); err != nil {
 		log.Fatal("failed to migrate database:", err)
 	}

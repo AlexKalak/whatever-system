@@ -18,7 +18,11 @@ type DexService interface {
 	Create(dex *entities.Dex) (*entities.Dex, error)
 	EnsureByChainIDAndAddress(chainID uint64, address string, dexType string) (*entities.Dex, error)
 	GetAll() ([]entities.Dex, error)
+	GetPaginated(page, limit int) ([]entities.Dex, int64, error)
+	GetPaginatedByType(dexType string, page, limit int) ([]entities.Dex, int64, error)
 	GetByID(id uuid.UUID) (*entities.Dex, error)
+	GetByChainIDAndAddress(chainID uint64, address string) (*entities.Dex, error)
+	GetByTypeChainIDAndAddress(dexType string, chainID uint64, address string) (*entities.Dex, error)
 	Update(id uuid.UUID, payload *entities.Dex) (*entities.Dex, error)
 	Delete(id uuid.UUID) error
 }
@@ -66,8 +70,24 @@ func (s *dexService) GetAll() ([]entities.Dex, error) {
 	return s.repo.GetAll()
 }
 
+func (s *dexService) GetPaginated(page, limit int) ([]entities.Dex, int64, error) {
+	return s.repo.GetPaginated(page, limit)
+}
+
+func (s *dexService) GetPaginatedByType(dexType string, page, limit int) ([]entities.Dex, int64, error) {
+	return s.repo.GetPaginatedByType(strings.ToLower(strings.TrimSpace(dexType)), page, limit)
+}
+
 func (s *dexService) GetByID(id uuid.UUID) (*entities.Dex, error) {
 	return s.repo.GetByID(id)
+}
+
+func (s *dexService) GetByChainIDAndAddress(chainID uint64, address string) (*entities.Dex, error) {
+	return s.repo.GetByChainIDAndAddress(chainID, strings.ToLower(strings.TrimSpace(address)))
+}
+
+func (s *dexService) GetByTypeChainIDAndAddress(dexType string, chainID uint64, address string) (*entities.Dex, error) {
+	return s.repo.GetByTypeChainIDAndAddress(strings.ToLower(strings.TrimSpace(dexType)), chainID, strings.ToLower(strings.TrimSpace(address)))
 }
 
 func (s *dexService) Update(id uuid.UUID, payload *entities.Dex) (*entities.Dex, error) {

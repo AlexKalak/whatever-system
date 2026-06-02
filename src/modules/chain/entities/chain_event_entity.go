@@ -15,9 +15,11 @@ type ChainEventData interface {
 }
 
 type ChainEvent struct {
-	Type        ChainEventType `json:"type"`
-	BlockNumber uint64         `json:"block_number"`
-	Address     string         `json:"address"`
-	TxHash      string         `json:"tx_hash"`
-	Data        ChainEventData `json:"data"`
+	Type         ChainEventType `json:"type"`
+	BlockNumber  uint64         `json:"block_number"`
+	IndexInBlock uint64         `json:"indexInBlock"`
+	IndexInTx    uint64         `json:"indexInTx"`
+	Address      string         `json:"address"`
+	TxHash       string         `json:"tx_hash"`
+	Data         ChainEventData `json:"data"`
 }
